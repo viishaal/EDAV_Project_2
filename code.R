@@ -44,7 +44,7 @@ for (i in c(1:10)) {
   plot(wrld_simpl, add=TRUE)
   dev.off()
 }
-system("convert -delay 80 *.pdf animate.gif")
-file.remove(list.files(pattern=".pdf"))
+system("convert -background white -alpha remove -layers OptimizePlus -delay 80 *.pdf animate.gif")
+file.remove(list.files(pattern="pdf"))
 
 close.nc(fid)
