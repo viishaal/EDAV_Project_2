@@ -1,0 +1,57 @@
+library(sp)
+library(rworldmap)
+
+# The single argument to this function, points, is a data.frame in which:
+#   - column 1 contains the longitude in degrees
+#   - column 2 contains the latitude in degrees
+coords2country = function(points)
+{  
+  countriesSP <- getMap(resolution='low')
+  #countriesSP <- getMap(resolution='high') #you could use high res map from rworldxtra if you were concerned about detail
+  
+  # convert our list of points to a SpatialPoints object
+  
+  # pointsSP = SpatialPoints(points, proj4string=CRS(" +proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0"))
+  
+  #setting CRS directly to that from rworldmap
+  pointsSP = SpatialPoints(points, proj4string=CRS(proj4string(countriesSP)))  
+  
+  
+  # use 'over' to get indices of the Polygons object containing each point 
+  indices = over(pointsSP, countriesSP)
+  
+  # return the ADMIN names of each country
+  indices$ADMIN  
+  #indices$ISO3 # returns the ISO3 code 
+  #indices$continent   # returns the continent (6 continent model)
+  #indices$REGION   # returns the continent (7 continent model)
+}
+
+df = read.csv("Cleaned_main_cause.csv", strip.white = TRUE)
+df$Began = as.Date(df$Began, format = "%Y-%m-%d")
+
+# clean countries columndf$clean_countries = coords2country(data.frame(lon=df_no_na$Centroid.X, lat=df_no_na$Centroid.Y))
+
+df_no_na = df[complete.cases(data.frame(lon=df$Centroid.X, lat=df$Centroid.Y)),]
+df_no_na$clean_countries = coords2country(data.frame(lon=df_no_na$Centroid.X, lat=df_no_na$Centroid.Y))
+df_no_na %>% select(Country, clean_countries) %>% head()
+df_g_country = df_no_na %>% group_by(clean_countries) %>% summarise(total_dead = sum(Dead))
+df_g_country = df_g_country[complete.cases(df_g_country),]
+df_g_country = df_g_country[order(-df_g_country$total_dead), ]
+df_sub = df_g_country[1:70,]
+
+
+g1 = ggplot(data=df_sub) 
+g1 = g1 + geom_bar(aes(x=reorder(clean_countries, total_dead), y=total_dead), fill="blue", stat="identity", alpha=0.7) 
+g1 = g1 + labs(title="Casualities by Country", x="country", y="casualities")
+g1 = g1 + theme(plot.title = element_text(size=20, face="bold", margin = margin(10, 0, 10, 0)))
+g1 = g1 + theme(axis.title.x=element_text(size=15, vjust=1.0))
+g1 = g1 + theme(axis.text.x=element_text(size=14, vjust=1.0))
+g1 = g1 + theme(axis.title.y=element_text(size=15))
+g1 = g1 + coord_flip()
+g1 = g1 + scale_fill_brewer()
+g1
+
+
+
+

@@ -66,7 +66,8 @@ densityplot(~df_cat$Dead | df_cat$Severity,
             scales=list(cex=1))
 
 
-## dead vs displaced over the yearslibrary(reshape2)
+## dead vs displaced over the years
+library(reshape2)
 dd = df %>% group_by(year) %>% summarise(dead=sum(Dead), displaced=sum(Displaced))
 dd$year = substr(as.character(dd_full$year), 0, 4)
 m = melt(dd, id=c("year"))
