@@ -4,6 +4,7 @@ install.packages("plotly")
 library(plotly)
 
 df = read.csv("Cleaned_main_cause.csv", strip.white = TRUE)
+df$Began = as.Date(df$Began, format = "%Y-%m-%d")
 
 # clean countries column
 
@@ -65,8 +66,30 @@ densityplot(~df_cat$Dead | df_cat$Severity,
             scales=list(cex=1))
 
 
+## dead vs displaced over the yearslibrary(reshape2)
+dd = df %>% group_by(year) %>% summarise(dead=sum(Dead), displaced=sum(Displaced))
+dd$year = substr(as.character(dd_full$year), 0, 4)
+m = melt(dd, id=c("year"))
+g1 = ggplot(data=m, aes(x=year, y=log(value), group=variable, colour=variable)) + geom_line(size=1.5)
+g1 = g1 + geom_point(size=4, shape=23, fill="white")
+g1 = g1 + scale_colour_brewer(palette="Set2")
+g1
 
+#g2 = ggplot(data=m, aes(x=year, y=log(value))) + geom_area(fill="blue", alpha=.2) + geom_line()
+#g2
 
+g3 = ggplot(data=dd)
+g3 = g3 + geom_bar(aes(x=year, y=log(displaced), colour="Displaced"), stat="identity", fill="blue", alpha=0.5)
+g3 = g3 + geom_bar(data=dd, aes(x=year, y=log(dead), colour="Dead"), stat="identity", fill="pink", alpha=0.7)
+g3 = g3 + labs(title="Timeline: Displaced | Dead", x="Year", y="Displaced | Dead")
+g3 = g3 + theme(plot.title = element_text(size=20, face="bold", margin = margin(10, 0, 10, 0)))
+g3 = g3 + theme(axis.text.x=element_text(size=14, vjust=1.0))
+g3 = g3 + theme(axis.title.x=element_text(size=17, vjust=-0.5))
+g3 = g3 + theme(axis.title.y=element_text(size=15))
+g3 = g3 + scale_colour_manual(name="Legend",
+                              values=c(Displaced="blue", Dead="red"))
+#g3 = g3 + geom_point(aes(color="My points"))
+g3
 
 
 
