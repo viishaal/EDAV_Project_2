@@ -68,8 +68,9 @@ densityplot(~df_cat$Dead | df_cat$Severity,
 
 ## dead vs displaced over the years
 library(reshape2)
+df$year = substr(as.character(df$Began), 0, 4)
 dd = df %>% group_by(year) %>% summarise(dead=sum(Dead), displaced=sum(Displaced))
-dd$year = substr(as.character(dd_full$year), 0, 4)
+
 m = melt(dd, id=c("year"))
 g1 = ggplot(data=m, aes(x=year, y=log(value), group=variable, colour=variable)) + geom_line(size=1.5)
 g1 = g1 + geom_point(size=4, shape=23, fill="white")
