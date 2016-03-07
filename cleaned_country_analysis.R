@@ -115,4 +115,19 @@ g1 = g1 + theme(legend.title = element_text(size=14))
 g1 = g1 + theme(legend.text = element_text(size=13))
 g1
 
+## plot displacement of people
+g1 = ggplot(data=dd, aes(x=year, y=log(displaced), group=continent, colour=continent))
+g1 = g1 + geom_smooth(method = lm)
+g1 = g1 + scale_colour_brewer(palette="Set1")
+g1 = g1 + labs(title="Timeline: Continent wise Displaced", y="Displaced (log scale)", x="")
+g1 = g1 + theme(plot.title = element_text(size=20, face="bold", margin = margin(10, 0, 10, 0)))
+g1 = g1 + theme(axis.text.x = element_text(size=14, vjust=1.0))
+g1 = g1 + theme(axis.text.y = element_text(size=14))
+g1 = g1 + theme(axis.title.x = element_text(size=15, vjust=-0.5))
+g1 = g1 + theme(axis.title.y = element_text(size=15))
+g1 = g1 + theme(legend.title = element_text(size=14))
+g1 = g1 + theme(legend.text = element_text(size=13))
+g1
+
+
 

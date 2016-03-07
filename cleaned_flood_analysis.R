@@ -5,6 +5,7 @@ library(plotly)
 
 df = read.csv("Cleaned_main_cause.csv", strip.white = TRUE)
 df$Began = as.Date(df$Began, format = "%Y-%m-%d")
+df$Ended = as.Date(df$Ended, format = "%Y-%m-%d")
 
 # clean countries column
 
@@ -92,7 +93,6 @@ g3 = g3 + scale_colour_manual(name="Legend",
                               values=c(Displaced="blue", Dead="red"))
 #g3 = g3 + geom_point(aes(color="My points"))
 g3
-
 
 
 df %>% group_by(Severity..) %>% 
